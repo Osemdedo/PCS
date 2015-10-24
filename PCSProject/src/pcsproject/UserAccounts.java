@@ -48,41 +48,125 @@ public class UserAccounts {
         }      
     }
     
-    public static void WriteFile(){
+    
+    
+    public static void ChangeArquivo(Map<String,String> userdata){
+        if(allUsers.containsKey(userdata)){
+            AddUser(userdata);
+        }
+        else{
+            EditUser(userdata);
+        }
+    }
+    
+    public static void EditUser(Map<String,String> userdata){
+       
+        
+        
+        File fileName = new File("arquivo.txt");
+        File tempFile = new File("temp.txt");
+        String line = null;
+        int aux=0;
+        String[] splitLine;
+
+        try {
+            
+            
+            FileWriter fileWriter = new FileWriter(tempFile);
+            FileReader fileReader = new FileReader(fileName);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            BufferedWriter bw = new BufferedWriter(fileWriter);
+            
+            
+            
+            while((line = bufferedReader.readLine()) != null) {
+                
+                
+                if(line.startsWith("nome")){
+                    splitLine = line.split(":");
+                    if(splitLine[1].equals(userdata.get("nome"))){
+                        
+                        System.out.println("wooow");
+                        aux=1;
+                        
+                    }
+                        
+                }
+                
+                
+                if(aux==1){  
+                    System.out.println(line);
+                    //System.out.println("line: "+line+ " nome"+userdata.get("nome"));
+                    
+                    if(line.contains(">>>")){
+                        System.out.println("aquiiiiii");
+                        aux=0;
+                    }
+                    continue;
+                }
+                else{
+                    //System.out.println(line);
+                    bw.write(line);
+                    bw.newLine();
+                }
+                
+                
+                    
+            }           
+             
+            
+            
+            bw.close();
+            bufferedReader.close();
+            fileName.delete();
+            boolean successful = tempFile.renameTo(fileName);
+        }
+           
+        catch(FileNotFoundException ex) {
+            System.out.println("Unable to open file '" + fileName + "'"); 
+            
+        }
+        catch(IOException ex) {
+            System.out.println("Error reading file '" + fileName + "'");  
+            
+        }      
+       
+    }
+    
+    public static void AddUser(Map<String,String> userdata){
     
         
+        try{
+            
+            File file =new File("arquivo.txt");
 
+            if(!file.exists()){
+               file.createNewFile();
+            }
 
+            //Here true is to append the content to file
+            FileWriter fw = new FileWriter(file,true);
+            //BufferedWriter writer give better performance
+            BufferedWriter bw = new BufferedWriter(fw);
+            
+            for( String key : userdata.keySet()){
+            bw.newLine();   
+            bw.write(key+":"+userdata.get(key));
+            //System.out.println(userdata.get(key));              
+            }
+            bw.newLine();   
+            bw.write(">>>");        
+            //Closing BufferedWriter Stream
+            bw.close();
+            System.out.println("Salvo com sucesso no arquivo");
 
-            try{
-    	String content = "This is my content which would be appended " +
-        	"at the end of the specified file";
-        //Specify the file name and path here
-    	File file =new File("arquivo.txt");
-
-    	/* This logic is to create the file if the
-    	 * file is not already present
-    	 */
-    	if(!file.exists()){
-    	   file.createNewFile();
-    	}
-
-    	//Here true is to append the content to file
-    	FileWriter fw = new FileWriter(file,true);
-    	//BufferedWriter writer give better performance
-    	BufferedWriter bw = new BufferedWriter(fw);
-    	bw.write(content);
-    	//Closing BufferedWriter Stream
-    	bw.close();
-
-	System.out.println("Data successfully appended at the end of file");
-
-      }catch(IOException ioe){
-         System.out.println("Exception occurred:");
-    	 ioe.printStackTrace();
+        }
+        catch(IOException ioe){
+            System.out.println("Exception occurred:");
+            ioe.printStackTrace();
        }
     
-
+        
     
     
     
